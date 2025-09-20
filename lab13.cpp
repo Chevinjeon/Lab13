@@ -179,3 +179,80 @@ void mutateWithDataPointer(vector<int>& steps, int delta) {
     }
 }
 
+void demoVectorMembers(vector<int>& steps) {
+    cout << "\n--- Demonstrating std::vector members ---\n";
+
+    // Show current size/capacity and reserve additional capacity to reduce reallocations
+    cout << "Before reserve: size=" << steps.size() << ", capacity=" << steps.capacity() << "\n";
+    steps.reserve(max(steps.capacity(), steps.size() + 32));
+    cout << "After  reserve: size=" << steps.size() << ", capacity=" << steps.capacity() << "\n";
+
+    // push_back(): append a small synthetic sequence (e.g., bonuses)
+    // We keep it small so original data remains visible
+    steps.push_back(steps.empty() ? 5000 : steps.back() + 50);
+    steps.push_back(steps.back() + 50);
+    cout << "After push_back x2: size=" << steps.size() << ", capacity=" << steps.capacity() << "\n";
+
+    // pop_back(): remove the last appended element
+    if (!steps.empty()) steps.pop_back();
+    cout << "After pop_back():  size=" << steps.size() << ", capacity=" << steps.capacity() << "\n";
+
+    // resize(): bump first and last elements by +250 using at() (bounds-checked)
+    if (steps.size() >= 1) {
+        steps.at(0) += 250;
+        steps.at(steps.size() - 1) += 250;
+        cout << "front() after +250: " << steps.front()
+             << ", back() after +250: " << steps.back() << "\n";
+    }
+
+    // insert(): insert a marker value near the beginning (not at index 0 to keep day 1 visible)
+    if (steps.size() >= 2) {
+        steps.insert(steps.begin() + 1, 7777); // arbitrary marker
+        cout << "Inserted 7777 at index 1.\n";
+    }
+
+    // erase(): if we have that marker, remove it to restore structure
+    if (steps.size() >= 2 && steps[1] == 7777) {
+        steps.erase(steps.begin() + 1);
+        cout << "Erased marker at index 1.\n";
+    }
+
+    // assign(): create a baseline vector (all 5000s) and then swap back and forth
+    vector<int> baseline;
+    baseline.assign(steps.size(), 5000); // baseline filled with 5000, same length as steps
+
+    cout << "Swapping with a baseline vector (all 5000s)...\n";
+    steps.swap(baseline);
+
+    // Show first few to verify swap
+    cout << "After swap, 'steps' begins with:";
+    for (size_t i = 0; i < min<size_t>(10, steps.size()); ++i) cout << setw(FIELD_W) << steps[i];
+    cout << "\n";
+
+    // Swap back to restore original data
+    cout << "Swapping back to restore original data...\n";
+    steps.swap(baseline);
+
+    // shrink_to_fit(): request (non-binding) capacity reduction close to size()
+    // This is implementation-defined; we show intent and print results either way.
+    const size_t cap_before = steps.capacity();
+    steps.shrink_to_fit();
+    cout << "shrink_to_fit() requested (cap " << cap_before
+         << " -> " << steps.capacity() << ").\n";
+}
+
+void printSortedTopK(const vector<int>& steps, size_t k) {
+    if (k == 0 || steps.empty()) return;
+    if (k > steps.size()) k = steps.size();
+
+    // Copy and sort descending (keep original order intact)
+    vector<int> copy = steps;
+    sort(copy.begin(), copy.end());   // ascending
+    reverse(copy.begin(), copy.end()); // now descending
+
+    cout << "\nTop-" << k << " days (sorted, descending):\n";
+    for (size_t i = 0; i < k; ++i) {
+        cout << setw(FIELD_W) << copy[i];
+    }
+    cout << "\n";
+}
