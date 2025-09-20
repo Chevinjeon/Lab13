@@ -53,7 +53,7 @@ void printSortedTopK(const vector<int>& steps, size_t k);
 //======================== main() ===========================
 
 int main() {
-    cout << "COMSC-210 | Lab 12 (STD::vector) | Chevin Jeon\n";
+    cout << "COMSC-210 | Lab 13 (STD::vector) | Chevin Jeon\n";
     cout << "Reading daily step counts from file and exercising std::vector...\n\n";
 
     vector<int> steps;                   // empty vector; we’ll fill from file
